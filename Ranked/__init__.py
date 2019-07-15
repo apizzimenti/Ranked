@@ -1,3 +1,2 @@
 
-from Election import Election
-
+from .Election import Election

@@ -8,7 +8,7 @@ class Election():
     """
     Simulates a ranked-choice voting election.
     """
-    def __init__(self):
+    def __init__(self, ballots=[], candidates=[]):
         """
         Initializes the Election object.
 
@@ -19,8 +19,8 @@ class Election():
         :winner=None: Winner of the election. Once a single-winner election is
         simulated, this will map to the winner of that election.
         """
-        self.ballots = []
-        self.candidates = {}
+        self.ballots = ballots
+        self.candidates = { candidate: [] for candidate in candidates }
         self.winner = None
         self.eliminated = set()
         self.number_of_candidates = 0
@@ -103,7 +103,7 @@ class Election():
         return sorted(self.candidates, key=lambda g: -len(self.candidates[g]))
 
 
-    def single_winner_rcv_simulation(self):
+    def single_winner_rcv(self):
         """
         Simulates an RCV election.
         """
@@ -275,4 +275,24 @@ class Election():
         """
         with open(filepath, "w") as f:
             f.write(json.dumps({ "sankey": self.sankey_obj }, indent=2))
+
+    
+    def __repr__(self):
+        """
+        Returns a string representation of this Election object.
         
+        :returns: A string.
+        """
+        num_candidates = self.number_of_candidates
+        num_ballots = len(self.ballots)
+        active_candidates = num_candidates - len(self.eliminated)
+        active_ballots = num_ballots - sum([len(self.candidates[c]) for c in self.candidates])
+
+        status = (
+            f"Number of candidates: {num_candidates}\n"
+            f"Number of ballots: {num_ballots}\n"
+            f"Remaining candidates: {active_candidates}\n"
+            f"Exhausted ballots: {num_ballots - active_ballots}"
+        )
+
+        return status
